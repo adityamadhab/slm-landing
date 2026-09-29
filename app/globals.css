@@ -1,4 +1,5 @@
 @import "./framer.css";
+@import "./styles/custom.css";
 
 :root {
   --background: #000000;

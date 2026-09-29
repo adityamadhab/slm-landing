@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Avenna - AI App Template by Unroot",
-  description: "Avenna helps enterprises manage complex operations without compromising accuracy or speed.",
+  title: "OpenSLM - Private AI That Never Leaves the Building",
+  description: "Build and run language models fully inside your infrastructure. Your data, your model, your control.",
   icons: {
     icon: [
       {
@@ -19,14 +19,14 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    title: "Avenna - AI App Template by Unroot",
-    description: "Avenna helps enterprises manage complex operations without compromising accuracy or speed.",
+    title: "OpenSLM - Private AI That Never Leaves the Building",
+    description: "Build and run language models fully inside your infrastructure. Your data, your model, your control.",
     images: ["https://framerusercontent.com/images/Boj7qi54kWkJ9W0qdDbRSqaCjVQ.jpg"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Avenna - AI App Template by Unroot",
-    description: "Avenna helps enterprises manage complex operations without compromising accuracy or speed.",
+    title: "OpenSLM - Private AI That Never Leaves the Building",
+    description: "Build and run language models fully inside your infrastructure. Your data, your model, your control.",
     images: ["https://framerusercontent.com/images/Boj7qi54kWkJ9W0qdDbRSqaCjVQ.jpg"],
   },
 };

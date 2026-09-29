@@ -101,25 +101,25 @@ export default function Home() {
     // ==========================================
     const tabData = [
       {
-        name: "Tracking",
+        name: "Build without the heavy lifting",
         icon: "https://framerusercontent.com/images/7SeFTDcRAvLiKsySw3xu1d32yQ.svg?width=18&height=22",
         video:
           "https://framerusercontent.com/assets/BmjuzTfgFfIrtnqb0EG52KQZ8oQ.mp4",
-        text: "Track performance metrics effortlessly with automated updates that keep your business aligned and moving forward.",
+        text: "Guided tools handle data preparation, model selection, and fine-tuning, so your team can focus on results.",
       },
       {
-        name: "Dashboard",
+        name: "Full control when you want it",
         icon: "https://framerusercontent.com/images/95msAlnvgG4IWdSPF7eCj47k.svg?width=20&height=20",
         video:
           "https://framerusercontent.com/assets/8JYC2izAIyp5cMXetc35xADc8.mp4",
-        text: "Track performance metrics effortlessly with automated updates that keep your business aligned and moving forward.",
+        text: "Engineers can change training settings, model setup, and deployment details with complete code access.",
       },
       {
-        name: "Alerts",
+        name: "Deploy with one SDK",
         icon: "https://framerusercontent.com/images/RnV0eIDmn87oPW6SSF49UeqY44.svg?width=16&height=21",
         video:
           "https://framerusercontent.com/assets/Yn2cf4tiDCzkseusBKaqRDXlKE.mp4",
-        text: "Track performance metrics effortlessly with automated updates that keep your business aligned and moving forward.",
+        text: "Connect your model to any app, server, or device using a simple SDK and API.",
       },
     ];
 
