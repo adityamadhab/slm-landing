@@ -95,7 +95,10 @@ html {
 
 .framer-izeh1y {
   will-change: transform, opacity;
-  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Text reveal layers */
@@ -180,7 +183,7 @@ html {
    OPENSLM CUSTOM COMPONENT STYLES
    ========================================================================== */
 
-/* --- S2 Feature Badges Pill Bar --- */
+/* --- S2 Feature Badges Pill Bar & Dropping Animation --- */
 .openslm-pill-bar {
   display: flex;
   flex-wrap: wrap;
@@ -189,6 +192,7 @@ html {
   gap: 12px;
   margin: 32px auto 40px auto;
   max-width: 860px;
+  perspective: 1000px;
 }
 
 .openslm-pill {
@@ -206,22 +210,194 @@ html {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  
+  /* Initial dropped-from-above state */
+  opacity: 0;
+  transform: translateY(-40px) scale(0.92);
+  transition: opacity 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+              transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1),
+              background 0.25s ease,
+              border-color 0.25s ease,
+              box-shadow 0.25s ease,
+              color 0.25s ease;
+  will-change: transform, opacity;
 }
 
-.openslm-pill:hover {
+/* Staggered drop-in animation when visible */
+.openslm-pill-bar.is-visible .openslm-pill {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.openslm-pill-bar.is-visible .openslm-pill:nth-child(1) { transition-delay: 0ms; }
+.openslm-pill-bar.is-visible .openslm-pill:nth-child(2) { transition-delay: 85ms; }
+.openslm-pill-bar.is-visible .openslm-pill:nth-child(3) { transition-delay: 170ms; }
+.openslm-pill-bar.is-visible .openslm-pill:nth-child(4) { transition-delay: 255ms; }
+.openslm-pill-bar.is-visible .openslm-pill:nth-child(5) { transition-delay: 340ms; }
+
+/* Interactive Hover state after drop */
+.openslm-pill-bar.is-visible .openslm-pill:hover {
   background: rgba(63, 111, 255, 0.15);
   border-color: rgba(63, 111, 255, 0.5);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(63, 111, 255, 0.2);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 24px rgba(63, 111, 255, 0.25);
   color: #ffffff;
+  transition-delay: 0ms;
 }
 
 .openslm-pill-icon {
-  font-size: 14px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 15px;
+  height: 15px;
+  color: #7ca5ff;
+  flex-shrink: 0;
+}
+
+.openslm-pill-svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+.openslm-pill:hover .openslm-pill-icon {
+  color: #a8c4ff;
+}
+
+/* Hide overlapping floating report cards and medical dashboard mockup */
+.framer-6r19a3-container,
+.framer-8d6s6k-container,
+.framer-ygjq3-container,
+.framer-kjisf2,
+[data-framer-name="Dashboard"],
+#features-section,
+.framer-1epwloh {
+  display: none !important;
+}
+
+.framer-5d2a2s {
+  height: 18vh !important;
+  min-height: 120px !important;
+  flex: none !important;
+  width: 100% !important;
+  position: relative !important;
+  display: block !important;
+}
+
+#report,
+.framer-mpdjrl {
+  position: relative !important;
+  z-index: 5 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  margin-top: 0 !important;
+  padding-top: 40px !important;
+  padding-bottom: 35vh !important;
+}
+
+@media (max-width: 768px) {
+  .framer-5d2a2s {
+    height: 12vh !important;
+    min-height: 70px !important;
+  }
+
+  #report,
+  .framer-mpdjrl {
+    margin-top: 0 !important;
+    padding-top: 20px !important;
+    padding-bottom: 22vh !important;
+  }
+}
+
+/* Ensure Heading in Report stays on ONE single line */
+#report .framer-1igu6sl,
+.framer-mpdjrl .framer-1igu6sl,
+#report .framer-bmdo4s,
+.framer-mpdjrl .framer-bmdo4s {
+  max-width: 1100px !important;
+  width: 100% !important;
+}
+
+#report .framer-bmdo4s h1,
+.framer-mpdjrl .framer-bmdo4s h1 {
+  white-space: nowrap !important;
+  text-align: center !important;
+  font-size: clamp(26px, 3.4vw, 42px) !important;
+  line-height: 1.25 !important;
+  letter-spacing: -0.02em !important;
+  width: 100% !important;
+}
+
+@media (max-width: 768px) {
+  #report .framer-bmdo4s h1,
+  .framer-mpdjrl .framer-bmdo4s h1 {
+    white-space: normal !important;
+    font-size: 30px !important;
+  }
+}
+
+/* --- Enterprise Section 3 Bento Cards Equal Height & Even Alignment --- */
+.framer-1ut50gx {
+  align-items: stretch !important;
+}
+
+.framer-1rgo19o-container,
+.framer-1y2ithe-container,
+.framer-12qlzjb-container {
+  display: flex !important;
+  flex-direction: column !important;
+  align-self: stretch !important;
+  height: 100% !important;
+}
+
+.framer-1rgo19o-container > div,
+.framer-1y2ithe-container > div,
+.framer-12qlzjb-container > div,
+.framer-1rgo19o-container .framer-OHIq8,
+.framer-1y2ithe-container .framer-OHIq8,
+.framer-12qlzjb-container .framer-OHIq8 {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  height: 100% !important;
+  min-height: 380px !important;
+  gap: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.framer-1rgo19o-container .framer-q1s0pd,
+.framer-1y2ithe-container .framer-q1s0pd,
+.framer-12qlzjb-container .framer-q1s0pd {
+  margin-bottom: auto !important;
+  flex-shrink: 0 !important;
+}
+
+.framer-1rgo19o-container .framer-a047p5,
+.framer-1y2ithe-container .framer-a047p5,
+.framer-12qlzjb-container .framer-a047p5 {
+  margin-top: 80px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-end !important;
+}
+
+.framer-1rgo19o-container .framer-khh5hw,
+.framer-1y2ithe-container .framer-khh5hw,
+.framer-12qlzjb-container .framer-khh5hw {
+  min-height: 56px !important;
+  display: flex !important;
+  align-items: flex-end !important;
+}
+
+.framer-1rgo19o-container .framer-1wb0pgo,
+.framer-1y2ithe-container .framer-1wb0pgo,
+.framer-12qlzjb-container .framer-1wb0pgo {
+  min-height: 66px !important;
 }
 
 /* --- Section Container Base --- */
@@ -351,16 +527,37 @@ html {
 }
 
 .openslm-card-icon {
-  width: 46px;
-  height: 46px;
+  width: 44px;
+  height: 44px;
   border-radius: 12px;
-  background: rgba(63, 111, 255, 0.1);
-  border: 1px solid rgba(63, 111, 255, 0.25);
+  background: linear-gradient(135deg, rgba(63, 111, 255, 0.12) 0%, rgba(32, 96, 223, 0.04) 100%);
+  border: 1px solid rgba(63, 111, 255, 0.22);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+  color: #8da4ff;
   flex-shrink: 0;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.openslm-card-icon svg {
+  display: block;
+  stroke: #8da4ff;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.openslm-usecase-card:hover .openslm-card-icon {
+  background: linear-gradient(135deg, rgba(63, 111, 255, 0.28) 0%, rgba(32, 96, 223, 0.15) 100%);
+  border-color: rgba(99, 142, 255, 0.6);
+  color: #ffffff;
+  box-shadow: 0 0 20px rgba(63, 111, 255, 0.35);
+  transform: translateY(-2px) scale(1.05);
+}
+
+.openslm-usecase-card:hover .openslm-card-icon svg {
+  stroke: #ffffff;
+  filter: drop-shadow(0 0 6px rgba(141, 164, 255, 0.5));
 }
 
 .openslm-card-heading {
@@ -375,8 +572,9 @@ html {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
   flex-grow: 1;
+  min-height: 168px;
 }
 
 .openslm-usecase-item {
@@ -401,11 +599,24 @@ html {
 }
 
 .openslm-result-box {
-  background: rgba(16, 185, 129, 0.06);
-  border: 1px solid rgba(16, 185, 129, 0.22);
+  background: rgba(63, 111, 255, 0.08);
+  border: 1px solid rgba(63, 111, 255, 0.25);
   border-radius: 12px;
-  padding: 14px 16px;
+  padding: 16px 18px;
   margin-top: auto;
+  min-height: 104px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  box-shadow: 0 4px 20px rgba(63, 111, 255, 0.08);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.openslm-usecase-card:hover .openslm-result-box {
+  background: rgba(63, 111, 255, 0.14);
+  border-color: rgba(99, 140, 255, 0.45);
+  box-shadow: 0 6px 24px rgba(63, 111, 255, 0.2);
 }
 
 .openslm-result-label {
@@ -416,13 +627,17 @@ html {
   text-transform: uppercase;
   font-weight: 700;
   letter-spacing: 0.08em;
-  color: #34d399;
-  margin-bottom: 5px;
+  color: #7ca5ff;
+  margin-bottom: 6px;
+}
+
+.openslm-result-label svg {
+  stroke: #5c8bff;
 }
 
 .openslm-result-text {
   font-size: 13.5px;
-  line-height: 1.48;
+  line-height: 1.5;
   color: rgba(255, 255, 255, 0.92);
   font-weight: 500;
   margin: 0;
@@ -507,26 +722,27 @@ html {
 .openslm-industry-pill {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 22px;
+  justify-content: center;
+  padding: 10px 22px;
   border-radius: 9999px;
   background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 13.5px;
   font-weight: 500;
+  letter-spacing: -0.01em;
   white-space: nowrap;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  transition: all 0.25s ease;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .openslm-industry-pill:hover {
-  background: rgba(63, 111, 255, 0.16);
-  border-color: rgba(63, 111, 255, 0.5);
+  background: rgba(63, 111, 255, 0.14);
+  border-color: rgba(63, 111, 255, 0.45);
   color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(63, 111, 255, 0.2);
+  box-shadow: 0 8px 24px rgba(63, 111, 255, 0.2);
 }
 
 /* OpenSLM Logo Header & Footer */
@@ -553,4 +769,23 @@ html {
   align-items: center;
   justify-content: center;
   box-shadow: 0 0 15px rgba(63, 111, 255, 0.5);
+}
+
+/* Footer Real Links Interactive Styling */
+.framer-zy6qQ a {
+  transition: all 0.25s ease !important;
+}
+
+.framer-zy6qQ a:hover .framer-text {
+  color: #7ca5ff !important;
+}
+
+.framer-zy6qQ .framer-dhtiI:hover {
+  background-color: rgba(63, 111, 255, 0.25) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(63, 111, 255, 0.35);
+}
+
+.framer-zy6qQ .framer-dhtiI:hover > div {
+  opacity: 1 !important;
 }

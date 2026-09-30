@@ -115,7 +115,7 @@ export function initLightRays(container: HTMLElement): () => void {
   window.addEventListener("resize", resize);
 
   let animationFrameId: number;
-  let startTime = performance.now();
+  const startTime = performance.now();
 
   const render = (now: number) => {
     const elapsedSeconds = (now - startTime) / 1000;

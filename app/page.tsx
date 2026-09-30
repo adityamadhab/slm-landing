@@ -219,14 +219,31 @@ export default function Home() {
     }
 
     // ==========================================
+    // 5b. Feature Pills Bar Dropping Animation Observer
+    // ==========================================
+    const pillBars = root.querySelectorAll<HTMLElement>(".openslm-pill-bar");
+    const pillObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+    pillBars.forEach((bar) => pillObserver.observe(bar));
+
+    // ==========================================
     // 6. SCROLL ANIMATION ENGINE (60 FPS rAF)
     // ==========================================
     const heroSection = root.querySelector<HTMLElement>("#hero") || root.querySelector<HTMLElement>(".framer-knV2p");
     const heroGraphic = root.querySelector<HTMLElement>(".framer-edjs39");
     const heroTitle = root.querySelector<HTMLElement>(".framer-1q9xlnn");
-    const heroSubtitle = root.querySelector<HTMLElement>(".framer-v90vsv");
+    const heroSubtitles = root.querySelectorAll<HTMLElement>(".framer-1djb550");
+    const heroContent = root.querySelector<HTMLElement>(".framer-1fgazng");
     const reportSection = root.querySelector<HTMLElement>("#report");
-    const reportCard = root.querySelector<HTMLElement>(".framer-izeh1y");
+    const reportCards = root.querySelectorAll<HTMLElement>(".framer-izeh1y");
     const expertHeading = root.querySelector<HTMLElement>(".framer-17i4rxh");
     const navBar = root.querySelector<HTMLElement>("nav.framer-S6f3p");
 
@@ -261,35 +278,63 @@ export default function Home() {
       // B) Hero Perspective Zoom & Fade
       if (heroSection) {
         const heroHeight = heroSection.offsetHeight || vh;
-        const heroProgress = Math.min(Math.max(scrollY / (heroHeight * 0.75), 0), 1);
+        const heroProgress = Math.min(Math.max(scrollY / (heroHeight * 0.6), 0), 1);
 
         if (heroGraphic) {
-          const scale = 1 + heroProgress * 1.35; // Zooms up to 2.35x
-          const translateY = heroProgress * 120;
-          heroGraphic.style.transform = `scale(${scale}) translateY(${translateY}px)`;
+          const scale = 1 + heroProgress * 0.3;
+          heroGraphic.style.transform = `scale(${scale})`;
         }
+
+        // Smoothly fade out initial hero content over first 240px of scroll
+        const heroFadeProgress = Math.min(Math.max(scrollY / 240, 0), 1);
+        const heroContentOpacity = Math.max(0, 1 - heroFadeProgress);
 
         if (heroTitle) {
-          const titleOpacity = Math.max(0, 1 - heroProgress * 2.2);
-          const titleY = -heroProgress * 60;
-          heroTitle.style.opacity = `${titleOpacity}`;
+          const titleY = -scrollY * 0.25;
+          heroTitle.style.opacity = `${heroContentOpacity}`;
           heroTitle.style.transform = `translateY(${titleY}px)`;
+          heroTitle.style.visibility = heroContentOpacity <= 0.01 ? "hidden" : "visible";
         }
 
-        if (heroSubtitle) {
-          const subOpacity = Math.max(0, 1 - heroProgress * 2.0);
-          const subY = heroProgress * 50;
-          heroSubtitle.style.opacity = `${subOpacity}`;
-          heroSubtitle.style.transform = `translateY(${subY}px)`;
+        heroSubtitles.forEach((sub) => {
+          const subY = scrollY * 0.2;
+          sub.style.opacity = `${heroContentOpacity}`;
+          sub.style.transform = `translateY(${subY}px)`;
+          sub.style.visibility = heroContentOpacity <= 0.01 ? "hidden" : "visible";
+        });
+
+        if (heroContent) {
+          heroContent.style.opacity = `${heroContentOpacity}`;
+          heroContent.style.visibility = heroContentOpacity <= 0.01 ? "hidden" : "visible";
         }
       }
 
-      // C) Report Section Floating Reveal
-      if (reportSection && reportCard) {
-        const rect = reportSection.getBoundingClientRect();
-        const reportProgress = Math.min(Math.max((vh - rect.top) / (vh * 0.55), 0), 1);
-        reportCard.style.opacity = `${reportProgress}`;
-        reportCard.style.transform = `translateY(${(1 - reportProgress) * 30}px)`;
+      // C) Report Section Floating Reveal (GUARANTEED hidden at first view)
+      if (reportSection && reportCards.length > 0) {
+        if (scrollY < 80) {
+          reportCards.forEach((card) => {
+            card.style.opacity = "0";
+            card.style.visibility = "hidden";
+            card.style.pointerEvents = "none";
+            card.style.transform = "translateY(40px)";
+          });
+        } else {
+          const rect = reportSection.getBoundingClientRect();
+          // Starts fading in when report enters bottom 88% of viewport, full by 38%
+          const revealStart = vh * 0.88;
+          const revealEnd = vh * 0.38;
+          const reportProgress = Math.min(
+            Math.max((revealStart - rect.top) / (revealStart - revealEnd), 0),
+            1
+          );
+
+          reportCards.forEach((card) => {
+            card.style.opacity = `${reportProgress}`;
+            card.style.visibility = reportProgress <= 0.01 ? "hidden" : "visible";
+            card.style.pointerEvents = reportProgress > 0.5 ? "auto" : "none";
+            card.style.transform = `translateY(${(1 - reportProgress) * 35}px)`;
+          });
+        }
       }
 
       // D) Enterprise Text Character-by-Character Illumination Scrub
@@ -320,6 +365,14 @@ export default function Home() {
         }
       }
 
+      // F) Feature Pills Bar Dropping Trigger
+      pillBars.forEach((bar) => {
+        const rect = bar.getBoundingClientRect();
+        if (rect.top < vh * 0.92) {
+          bar.classList.add("is-visible");
+        }
+      });
+
       ticking = false;
     };
 
@@ -344,7 +397,12 @@ export default function Home() {
       link.addEventListener("click", (e) => {
         const targetId = link.getAttribute("href")?.slice(1);
         if (!targetId) return;
-        const targetEl = root.querySelector<HTMLElement>(`#${targetId}`);
+        let targetEl = root.querySelector<HTMLElement>(`#${targetId}`);
+        if (!targetEl || targetEl.offsetParent === null) {
+          if (targetId === "features-section") {
+            targetEl = root.querySelector<HTMLElement>("#solution-section") || root.querySelector<HTMLElement>("#enterprise-section");
+          }
+        }
         if (targetEl) {
           e.preventDefault();
           targetEl.scrollIntoView({ behavior: "smooth" });
@@ -357,6 +415,7 @@ export default function Home() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
       bentoObserver.disconnect();
+      pillObserver.disconnect();
     };
   }, []);
 
