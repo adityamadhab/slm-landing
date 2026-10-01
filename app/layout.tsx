@@ -2,32 +2,50 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://openslm.appopentechnologies.in"),
   title: "OpenSLM - Private AI That Never Leaves the Building",
   description: "Build and run language models fully inside your infrastructure. Your data, your model, your control.",
   icons: {
     icon: [
       {
-        url: "https://framerusercontent.com/images/KAxC6rSgYLCxgnUoSngI9JZOM8.png",
-        media: "(prefers-color-scheme: light)",
+        url: "/favicon.ico",
+        sizes: "any",
       },
       {
-        url: "https://framerusercontent.com/images/KAxC6rSgYLCxgnUoSngI9JZOM8.png",
-        media: "(prefers-color-scheme: dark)",
+        url: "/icon.png",
+        type: "image/png",
+        sizes: "512x512",
       },
     ],
-    apple: "https://framerusercontent.com/images/sCubfodQX6d1T0DBTb5e2W9Sbkc.png",
+    apple: [
+      {
+        url: "/apple-icon.png",
+        sizes: "512x512",
+      },
+    ],
   },
   openGraph: {
     type: "website",
+    locale: "en_US",
+    url: "https://openslm.appopentechnologies.in",
+    siteName: "OpenSLM",
     title: "OpenSLM - Private AI That Never Leaves the Building",
     description: "Build and run language models fully inside your infrastructure. Your data, your model, your control.",
-    images: ["https://framerusercontent.com/images/Boj7qi54kWkJ9W0qdDbRSqaCjVQ.jpg"],
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        type: "image/jpeg",
+        alt: "OpenSLM - Private AI That Never Leaves the Building",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "OpenSLM - Private AI That Never Leaves the Building",
     description: "Build and run language models fully inside your infrastructure. Your data, your model, your control.",
-    images: ["https://framerusercontent.com/images/Boj7qi54kWkJ9W0qdDbRSqaCjVQ.jpg"],
+    images: ["/og-image.jpg"],
   },
 };
 
