@@ -70,14 +70,14 @@ export default function Home() {
     });
 
     // ==========================================
-    // 3. Mobile Navigation Menu Toggle
+    // 3. Mobile Navigation Menu Toggle (Delegated & Resilient)
     // ==========================================
-    const burgerButtons = root.querySelectorAll<HTMLElement>(
-      ".framer-ZLw4j, .framer-153cpjv-container"
-    );
-    burgerButtons.forEach((btn) => {
-      btn.style.cursor = "pointer";
-      btn.addEventListener("click", (e) => {
+    const onRootClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+
+      if (target.closest(".framer-153cpjv-container, .framer-ZLw4j")) {
+        e.preventDefault();
         e.stopPropagation();
         const mobileNav = root.querySelector<HTMLElement>(
           'nav[data-framer-name^="Mobile"]'
@@ -88,13 +88,61 @@ export default function Home() {
           mobileNav.classList.remove("framer-v-18krsnf");
           mobileNav.classList.add("framer-v-tvlyn2");
           mobileNav.setAttribute("data-framer-name", "Mobile - Close");
+          document.body.style.overflow = "";
         } else {
           mobileNav.classList.remove("framer-v-tvlyn2");
           mobileNav.classList.add("framer-v-18krsnf");
           mobileNav.setAttribute("data-framer-name", "Mobile - Open");
+          document.body.style.overflow = "hidden";
         }
-      });
-    });
+      } else if (target.closest('nav[data-framer-name^="Mobile"] a')) {
+        const mobileNav = root.querySelector<HTMLElement>(
+          'nav[data-framer-name^="Mobile"]'
+        );
+        if (mobileNav && mobileNav.classList.contains("framer-v-18krsnf")) {
+          mobileNav.classList.remove("framer-v-18krsnf");
+          mobileNav.classList.add("framer-v-tvlyn2");
+          mobileNav.setAttribute("data-framer-name", "Mobile - Close");
+          document.body.style.overflow = "";
+        }
+      } else {
+        // FAQ Accordion click delegation (reliable on both mobile & desktop)
+        const faqItem = target.closest<HTMLElement>(".framer-PmboO");
+        if (faqItem && root.contains(faqItem)) {
+          e.preventDefault();
+          const isClosed =
+            faqItem.classList.contains("framer-v-1dgicd") ||
+            faqItem.getAttribute("data-framer-name") === "Close";
+
+          const allFaqItems = root.querySelectorAll<HTMLElement>(".framer-PmboO");
+          allFaqItems.forEach((other) => {
+            if (other !== faqItem) {
+              other.classList.remove("framer-v-rek8sw");
+              other.classList.add("framer-v-1dgicd");
+              other.setAttribute("data-framer-name", "Close");
+              const icon = other.querySelector<HTMLElement>(".framer-1d88yut");
+              if (icon) icon.style.transform = "rotate(0deg)";
+            }
+          });
+
+          if (isClosed) {
+            faqItem.classList.remove("framer-v-1dgicd");
+            faqItem.classList.add("framer-v-rek8sw");
+            faqItem.setAttribute("data-framer-name", "Open");
+            const icon = faqItem.querySelector<HTMLElement>(".framer-1d88yut");
+            if (icon) icon.style.transform = "rotate(180deg)";
+          } else {
+            faqItem.classList.remove("framer-v-rek8sw");
+            faqItem.classList.add("framer-v-1dgicd");
+            faqItem.setAttribute("data-framer-name", "Close");
+            const icon = faqItem.querySelector<HTMLElement>(".framer-1d88yut");
+            if (icon) icon.style.transform = "rotate(0deg)";
+          }
+        }
+      }
+    };
+
+    root.addEventListener("click", onRootClick);
 
     // ==========================================
     // 4. Feature Tabs Switcher
@@ -245,7 +293,7 @@ export default function Home() {
     const reportSection = root.querySelector<HTMLElement>("#report");
     const reportCards = root.querySelectorAll<HTMLElement>(".framer-izeh1y");
     const expertHeading = root.querySelector<HTMLElement>(".framer-17i4rxh");
-    const navBar = root.querySelector<HTMLElement>("nav.framer-S6f3p");
+    const navBars = root.querySelectorAll<HTMLElement>("nav.framer-S6f3p");
 
     // Text reveal statement containers
     const textRevealContainers = root.querySelectorAll<HTMLElement>(
@@ -257,26 +305,27 @@ export default function Home() {
     const updateScrollAnimations = () => {
       const scrollY = window.scrollY;
       const vh = window.innerHeight;
+      const isDesktop = window.innerWidth >= 810;
 
       // A) Sticky Navbar Blur & Glassmorphism
-      if (navBar) {
-        if (scrollY > 40) {
-          navBar.style.backgroundColor = "rgba(0, 0, 0, 0.85)";
-          navBar.style.backdropFilter = "blur(16px)";
-          navBar.style.setProperty("-webkit-backdrop-filter", "blur(16px)");
-          navBar.style.borderBottom = "1px solid rgba(255, 255, 255, 0.08)";
-          navBar.style.boxShadow = "0 10px 30px rgba(0, 0, 0, 0.6)";
+      navBars.forEach((nav) => {
+        if (scrollY > 30) {
+          nav.style.backgroundColor = "rgba(0, 0, 0, 0.85)";
+          nav.style.backdropFilter = "blur(16px)";
+          nav.style.setProperty("-webkit-backdrop-filter", "blur(16px)");
+          nav.style.borderBottom = "1px solid rgba(255, 255, 255, 0.08)";
+          nav.style.boxShadow = "0 10px 30px rgba(0, 0, 0, 0.6)";
         } else {
-          navBar.style.backgroundColor = "rgba(0, 0, 0, 0)";
-          navBar.style.backdropFilter = "none";
-          navBar.style.setProperty("-webkit-backdrop-filter", "none");
-          navBar.style.borderBottom = "1px solid transparent";
-          navBar.style.boxShadow = "none";
+          nav.style.backgroundColor = "rgba(0, 0, 0, 0)";
+          nav.style.backdropFilter = "none";
+          nav.style.setProperty("-webkit-backdrop-filter", "none");
+          nav.style.borderBottom = "1px solid transparent";
+          nav.style.boxShadow = "none";
         }
-      }
+      });
 
-      // B) Hero Perspective Zoom & Fade
-      if (heroSection) {
+      // B) Hero Perspective Zoom & Fade (Desktop only)
+      if (heroSection && isDesktop) {
         const heroHeight = heroSection.offsetHeight || vh;
         const heroProgress = Math.min(Math.max(scrollY / (heroHeight * 0.6), 0), 1);
 
@@ -309,31 +358,40 @@ export default function Home() {
         }
       }
 
-      // C) Report Section Floating Reveal (GUARANTEED hidden at first view)
+      // C) Report Section Floating Reveal
       if (reportSection && reportCards.length > 0) {
-        if (scrollY < 80) {
+        if (!isDesktop) {
           reportCards.forEach((card) => {
-            card.style.opacity = "0";
-            card.style.visibility = "hidden";
-            card.style.pointerEvents = "none";
-            card.style.transform = "translateY(40px)";
+            card.style.opacity = "1";
+            card.style.visibility = "visible";
+            card.style.pointerEvents = "auto";
+            card.style.transform = "none";
           });
         } else {
-          const rect = reportSection.getBoundingClientRect();
-          // Starts fading in when report enters bottom 88% of viewport, full by 38%
-          const revealStart = vh * 0.88;
-          const revealEnd = vh * 0.38;
-          const reportProgress = Math.min(
-            Math.max((revealStart - rect.top) / (revealStart - revealEnd), 0),
-            1
-          );
+          if (scrollY < 80) {
+            reportCards.forEach((card) => {
+              card.style.opacity = "0";
+              card.style.visibility = "hidden";
+              card.style.pointerEvents = "none";
+              card.style.transform = "translateY(40px)";
+            });
+          } else {
+            const rect = reportSection.getBoundingClientRect();
+            // Starts fading in when report enters bottom 88% of viewport, full by 38%
+            const revealStart = vh * 0.88;
+            const revealEnd = vh * 0.38;
+            const reportProgress = Math.min(
+              Math.max((revealStart - rect.top) / (revealStart - revealEnd), 0),
+              1
+            );
 
-          reportCards.forEach((card) => {
-            card.style.opacity = `${reportProgress}`;
-            card.style.visibility = reportProgress <= 0.01 ? "hidden" : "visible";
-            card.style.pointerEvents = reportProgress > 0.5 ? "auto" : "none";
-            card.style.transform = `translateY(${(1 - reportProgress) * 35}px)`;
-          });
+            reportCards.forEach((card) => {
+              card.style.opacity = `${reportProgress}`;
+              card.style.visibility = reportProgress <= 0.01 ? "hidden" : "visible";
+              card.style.pointerEvents = reportProgress > 0.5 ? "auto" : "none";
+              card.style.transform = `translateY(${(1 - reportProgress) * 35}px)`;
+            });
+          }
         }
       }
 
@@ -412,6 +470,8 @@ export default function Home() {
 
     return () => {
       if (cleanupLightRays) cleanupLightRays();
+      root.removeEventListener("click", onRootClick);
+      document.body.style.overflow = "";
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
       bentoObserver.disconnect();
